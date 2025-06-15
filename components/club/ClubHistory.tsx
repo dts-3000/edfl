@@ -38,7 +38,7 @@ interface ClubHistoryProps {
 }
 
 export default function ClubHistory({ club, records }: ClubHistoryProps) {
-  // Separate records by type
+  // Separate records by type - all sorted by year descending
   const premierships = records.filter((r) => r.type === "premiership").sort((a, b) => b.year - a.year)
   const bestAndFairest = records.filter((r) => r.type === "best-and-fairest").sort((a, b) => b.year - a.year)
   const articles = records.filter((r) => r.type === "article").sort((a, b) => b.year - a.year)
@@ -50,7 +50,7 @@ export default function ClubHistory({ club, records }: ClubHistoryProps) {
   const lastPremiership = premierships.length > 0 ? Math.max(...premierships.map((p) => p.year)) : null
   const totalBestAndFairest = bestAndFairest.length
 
-  // Get recent highlights (last 10 years)
+  // Get recent highlights (last 10 years) - sorted by year descending
   const currentYear = new Date().getFullYear()
   const recentRecords = records
     .filter((r) => r.year >= currentYear - 10)

@@ -126,7 +126,7 @@ export default function ClubPage() {
         collection(db, "clubArticles"),
         where("clubName", "==", club.name),
         where("published", "==", true),
-        orderBy("date", "desc"),
+        orderBy("year", "desc"),
       )
       const articlesSnapshot = await getDocs(articlesQuery)
       const articlesData: ClubArticle[] = []
@@ -303,7 +303,7 @@ export default function ClubPage() {
                   author: a.author,
                   source: a.source,
                 })),
-              ]}
+              ].sort((a, b) => b.year - a.year)}
             />
           </div>
 
