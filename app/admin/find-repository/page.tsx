@@ -1,181 +1,165 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Github, AlertTriangle, Search } from "lucide-react"
+import { ExternalLink, Github, GitBranch, Settings, AlertCircle } from "lucide-react"
 
-export default function FindRepositoryPage() {
+function FindRepositoryContent() {
+  const searchParams = useSearchParams()
+  const error = searchParams.get("error")
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Find Your Repository URL</h1>
-          <p className="text-muted-foreground">Locate your source repository information</p>
+          <p className="text-muted-foreground mt-2">Locate your source repository to understand deployment issues</p>
         </div>
       </div>
 
-      <Alert>
-        <Search className="h-4 w-4" />
-        <AlertDescription>
-          Your repository URL determines where Vercel looks for code changes. Let's find it!
-        </AlertDescription>
-      </Alert>
+      {error && (
+        <Card className="border-red-200 bg-red-50">
+          <CardHeader>
+            <CardTitle className="text-red-800 flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              Error Detected
+            </CardTitle>
+            <CardDescription className="text-red-600">{error}</CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ExternalLink className="h-5 w-5" />
-            Step 1: Check Vercel Dashboard
-          </CardTitle>
-          <CardDescription>Find your repository information in Vercel</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-4">
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">1</Badge>
-                <h4 className="font-medium">Open Vercel Dashboard</h4>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">Go to your Vercel dashboard and find your project</p>
-              <Button asChild variant="outline" size="sm">
-                <a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open Vercel Dashboard
-                </a>
-              </Button>
+      {/* Rest of the component content remains the same */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Method 1: Vercel Dashboard
+            </CardTitle>
+            <CardDescription>Find your repository URL in project settings</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p className="font-medium">Steps:</p>
+              <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                <li>Go to Vercel Dashboard</li>
+                <li>Click your project name</li>
+                <li>Go to Settings → General</li>
+                <li>Look for "Git Repository" section</li>
+              </ol>
             </div>
+            <Button asChild className="w-full">
+              <a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Open Vercel Dashboard
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
 
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">2</Badge>
-                <h4 className="font-medium">Click Your Project</h4>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                Look for a project named something like "edflnologindemo" or "v0-edflnologindemo"
-              </p>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <GitBranch className="h-5 w-5" />
+              Method 2: Deployment Details
+            </CardTitle>
+            <CardDescription>Check individual deployments for source info</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p className="font-medium">Steps:</p>
+              <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                <li>Go to Deployments tab</li>
+                <li>Click on any deployment</li>
+                <li>Look for "Source" information</li>
+                <li>Note the repository URL</li>
+              </ol>
             </div>
-
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">3</Badge>
-                <h4 className="font-medium">Check Project Settings</h4>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                Go to Settings → General and look for "Git Repository" section
-              </p>
-            </div>
-
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">4</Badge>
-                <h4 className="font-medium">Find Repository URL</h4>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">You'll see something like:</p>
-              <div className="bg-muted p-3 rounded text-sm font-mono">
-                <p>https://github.com/username/repository-name</p>
-                <p className="text-muted-foreground mt-1">or</p>
-                <p>https://github.com/v0-team/v0-edflnologindemo-xyz</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
           <CardTitle>What You Might Find</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <div className="p-3 border rounded">
-              <div className="flex items-center gap-2 mb-2">
-                <Github className="h-4 w-4" />
-                <strong className="text-sm">GitHub Repository</strong>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                If you see a GitHub URL, that's your source repository. Changes need to be pushed there.
-              </p>
-            </div>
-
-            <div className="p-3 border rounded">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <strong className="text-sm">No Repository Connected</strong>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                If you see "No Git repository connected" or similar, that explains why changes aren't deploying.
-              </p>
-            </div>
-
-            <div className="p-3 border rounded">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary">v0</Badge>
-                <strong className="text-sm">v0-Generated Repository</strong>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                If you see a repository starting with "v0-", it was created by v0's deployment system.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Alternative: Check Deployment Details</CardTitle>
+          <CardDescription>Different scenarios and their solutions</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-4">
-            <div className="p-4 border rounded-lg">
-              <h4 className="font-medium mb-2">In Vercel Dashboard:</h4>
-              <ol className="text-sm space-y-1">
-                <li>1. Go to Deployments tab</li>
-                <li>2. Click on any deployment</li>
-                <li>3. Look for "Source" or "Repository" information</li>
-                <li>4. The URL will be shown there</li>
-              </ol>
+            <div className="flex items-start gap-3">
+              <Badge variant="secondary" className="mt-1">
+                <Github className="h-3 w-3 mr-1" />
+                GitHub
+              </Badge>
+              <div>
+                <p className="font-medium">GitHub Repository</p>
+                <p className="text-sm text-muted-foreground">URL like: https://github.com/username/repository-name</p>
+                <p className="text-sm text-green-600 mt-1">✅ Solution: Push changes to this repository</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Badge variant="outline" className="mt-1">
+                v0
+              </Badge>
+              <div>
+                <p className="font-medium">v0-Generated Repository</p>
+                <p className="text-sm text-muted-foreground">
+                  URL like: https://github.com/v0-team/v0-edflnologindemo-xyz
+                </p>
+                <p className="text-sm text-blue-600 mt-1">ℹ️ Solution: Use v0's deployment features</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Badge variant="destructive" className="mt-1">
+                None
+              </Badge>
+              <div>
+                <p className="font-medium">No Repository Connected</p>
+                <p className="text-sm text-muted-foreground">Shows "No Git repository connected"</p>
+                <p className="text-sm text-orange-600 mt-1">⚠️ Solution: Set up Git deployment</p>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Alert>
-        <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          <strong>Common Scenarios:</strong>
-          <ul className="mt-2 space-y-1 text-sm">
-            <li>
-              • <strong>No repository:</strong> You need to set up Git deployment
-            </li>
-            <li>
-              • <strong>v0 repository:</strong> Use v0's update deployment feature
-            </li>
-            <li>
-              • <strong>Your GitHub:</strong> Push changes to that repository
-            </li>
-          </ul>
-        </AlertDescription>
-      </Alert>
-
       <Card>
         <CardHeader>
-          <CardTitle>Quick Commands to Check</CardTitle>
+          <CardTitle>Next Steps</CardTitle>
+          <CardDescription>Once you find your repository URL</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            <div className="p-3 bg-muted rounded">
-              <p className="text-sm font-medium mb-1">If you have the repository locally:</p>
-              <code className="text-sm">git remote -v</code>
-            </div>
-            <div className="p-3 bg-muted rounded">
-              <p className="text-sm font-medium mb-1">To check current branch:</p>
-              <code className="text-sm">git branch</code>
-            </div>
+          <div className="space-y-2">
+            <p className="font-medium">If you have a GitHub repository:</p>
+            <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground ml-4">
+              <li>Clone the repository locally</li>
+              <li>Make your changes</li>
+              <li>Commit and push to trigger deployment</li>
+            </ol>
+
+            <p className="font-medium mt-4">If you don't have a repository:</p>
+            <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground ml-4">
+              <li>Use v0's "Deploy" button to create one</li>
+              <li>Or manually create a GitHub repository</li>
+              <li>Upload your code and connect to Vercel</li>
+            </ol>
           </div>
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function FindRepositoryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FindRepositoryContent />
+    </Suspense>
   )
 }
