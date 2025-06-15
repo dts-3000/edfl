@@ -253,15 +253,30 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
   const handleImageUpload = async (files: FileList | null) => {
     if (!files) return
 
+    console.log("=== UPLOADING IMAGES ===")
+    console.log("Files to upload:", files.length)
+
     setUploadingImages(true)
     const uploadedImages: ArticleImage[] = []
 
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        if (!file.type.startsWith("image/")) continue
+        console.log(`Uploading file ${i + 1}:`, file.name, file.type, file.size)
 
-        const result = await uploadImage(file, `club-articles/${club.name}`)
+        if (!file.type.startsWith("image/")) {
+          console.warn(`Skipping non-image file: ${file.name}`)
+          continue
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          console.warn(`File too large: ${file.name} (${file.size} bytes)`)
+          toast.error(`File ${file.name} is too large (max 10MB)`)
+          continue
+        }
+
+        const result = await uploadImage(file, `club-articles/${club.name.replace(/[^a-zA-Z0-9]/g, "_")}`)
+        console.log(`✅ Upload successful:`, result)
 
         const imageData: ArticleImage = {
           id: `${Date.now()}-${i}`,
@@ -274,6 +289,8 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
         uploadedImages.push(imageData)
       }
 
+      console.log(`✅ All uploads complete. ${uploadedImages.length} images uploaded.`)
+
       setNewArticle({
         ...newArticle,
         images: [...(newArticle.images || []), ...uploadedImages],
@@ -281,8 +298,8 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
 
       toast.success(`${uploadedImages.length} image(s) uploaded successfully`)
     } catch (error) {
-      console.error("Error uploading images:", error)
-      toast.error("Failed to upload images")
+      console.error("❌ Error uploading images:", error)
+      toast.error(`Failed to upload images: ${error.message}`)
     } finally {
       setUploadingImages(false)
     }
@@ -312,6 +329,7 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
     console.log("=== ADDING ARTICLE ===")
     console.log("New article data:", newArticle)
     console.log("Club ID:", club.id)
+    console.log("Images to save:", newArticle.images?.length || 0)
 
     if (!newArticle.year || !newArticle.title || !newArticle.content) {
       console.error("Missing required fields:", {
@@ -324,6 +342,14 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
     }
 
     try {
+      // Prepare image URLs for storage
+      const imageUrls =
+        newArticle.images?.map((img) => ({
+          url: img.url,
+          caption: img.caption || "",
+          filename: img.filename,
+        })) || []
+
       const recordData = {
         type: "article" as const,
         year: newArticle.year,
@@ -331,7 +357,10 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
         description: newArticle.content,
         author: newArticle.author || "",
         source: newArticle.source || "",
-        images: newArticle.images?.map((img) => img.url) || [],
+        articleType: newArticle.type,
+        date: newArticle.date,
+        images: imageUrls,
+        createdAt: new Date().toISOString(),
       }
 
       console.log("Record data to save:", recordData)
@@ -356,7 +385,7 @@ export default function ClubRecordsForm({ club, onSave, onCancel }: ClubRecordsF
         images: [],
       })
       setIsArticleDialogOpen(false)
-      toast.success("Article added successfully")
+      toast.success("Article added successfully with " + imageUrls.length + " images")
     } catch (error) {
       console.error("❌ Error adding article:", error)
       toast.error(`Failed to add article: ${error.message}`)
