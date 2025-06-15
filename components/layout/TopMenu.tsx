@@ -17,6 +17,7 @@ const navigation = [
   { name: "Live Scores", href: "/live-scores" },
   { name: "Clubs", href: "/clubs" },
   { name: "League History", href: "/league-history" },
+  { name: "Historical Seasons", href: "/historical-seasons" },
   { name: "Admin", href: "/admin" },
 ]
 

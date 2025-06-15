@@ -53,7 +53,7 @@ interface Season {
   rounds: string[]
 }
 
-export default function HistoricalSeasonsPage() {
+export default function HistoricalSeasonsAdminPage() {
   const [seasons, setSeasons] = useState<Season[]>([])
   const [selectedSeason, setSelectedSeason] = useState<number | null>(null)
   const [matches, setMatches] = useState<HistoricalMatch[]>([])
@@ -323,7 +323,7 @@ export default function HistoricalSeasonsPage() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Historical Seasons</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Historical Seasons Management</h1>
             <p className="text-muted-foreground">Manage historical match data and seasons</p>
           </div>
           <div className="flex gap-2">
@@ -379,7 +379,6 @@ export default function HistoricalSeasonsPage() {
           <TabsList>
             <TabsTrigger value="seasons">Seasons</TabsTrigger>
             <TabsTrigger value="matches">Matches</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="seasons" className="space-y-4">
@@ -578,18 +577,6 @@ export default function HistoricalSeasonsPage() {
                 </Card>
               </>
             )}
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Season Analytics</CardTitle>
-                <CardDescription>Statistical overview of historical data</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">Analytics dashboard coming soon...</div>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>
